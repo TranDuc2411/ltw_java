@@ -1,31 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- *
- * @author lenovo
- */
 public class db {
-        public static Connection getConnection() {
-        String url = "jdbc:sqlserver://your_server_name:port_number;databaseName=your_database_name";
-        String username = "your_username";
-        String password = "your_password";
-
+    public static Connection getConnection() throws ClassNotFoundException {
+        
+        String username = "sa";
+        String password = "01tranduc";
+        String connectionUrl = "jdbc:sqlserver://localhost:1434;databaseName=db;user="+username+";password="+password+";encrypt=false;";
+        Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
         Connection connection = null;
 
         try {
-            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            connection = DriverManager.getConnection(url, username, password);
+//            String connectionUrl = "jdbc:sqlserver://localhost:1433;databaseName=AdventureWorks;user=MyUserName;password=*****;encrypt=false;";  
+            connection = DriverManager.getConnection(connectionUrl);  
             System.out.println("Connected to SQL Server.");
-        } catch (ClassNotFoundException e) {
-            System.out.println("JDBC Driver not found.");
-            e.printStackTrace();
         } catch (SQLException e) {
             System.out.println("Connection failed.");
             e.printStackTrace();
