@@ -1,4 +1,4 @@
-package dbhanddle;
+package dbhandle;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
