@@ -1,4 +1,4 @@
-package dao;
+package dbhanddle;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,8 @@ import java.util.List;
 import model.AccountApi;
 import config.db;
 
-public class AccountApiDAO {
+public class AccountApiDao {
+//    public AccountApiDao(){};
 
     // Thêm một bản ghi mới vào bảng account_api
     public boolean addAccountApi(AccountApi accountApi) throws ClassNotFoundException {
@@ -66,7 +67,7 @@ public class AccountApiDAO {
     }
 
     // Cập nhật thông tin một bản ghi trong bảng account_api
-    public boolean updateAccountApi(AccountApi accountApi) {
+    public boolean updateAccountApi(AccountApi accountApi) throws ClassNotFoundException {
         String sql = "UPDATE account_api SET id_company=?, account=?, password=?, switchboard=?, domain=?, status=?, updated_at=? "
                 + "WHERE id=?";
 
@@ -91,7 +92,7 @@ public class AccountApiDAO {
     }
 
     // Xóa một bản ghi trong bảng account_api dựa vào ID
-    public boolean deleteAccountApi(int id) {
+    public boolean deleteAccountApi(int id) throws ClassNotFoundException {
         String sql = "DELETE FROM account_api WHERE id=?";
 
         try (Connection connection = db.getConnection();
@@ -105,5 +106,37 @@ public class AccountApiDAO {
             e.printStackTrace();
             return false;
         }
+    }
+    
+    // Tìm kiếm một bản ghi trong bảng account_api dựa vào username và password
+    public AccountApi findAccountApiByUsernameAndPassword(String username, String password) throws ClassNotFoundException {
+        AccountApi accountApi = null;
+        String sql = "SELECT * FROM account_api WHERE account=? AND password=?";
+
+        try (Connection connection = db.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, username);
+            statement.setString(2, password);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    accountApi = new AccountApi();
+                    accountApi.setId(resultSet.getInt("id"));
+                    accountApi.setCompanyId(resultSet.getInt("id_company"));
+                    accountApi.setAccount(resultSet.getString("account"));
+                    accountApi.setPassword(resultSet.getString("password"));
+                    accountApi.setSwitchboard(resultSet.getString("switchboard"));
+                    accountApi.setDomain(resultSet.getString("domain"));
+                    accountApi.setStatus(resultSet.getInt("status"));
+                    accountApi.setCreatedAt(resultSet.getTimestamp("created_at"));
+                    accountApi.setUpdatedAt(resultSet.getTimestamp("updated_at"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accountApi;
     }
 }
